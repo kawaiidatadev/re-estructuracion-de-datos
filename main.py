@@ -22,19 +22,19 @@ df = segment_first_product(db_path)
 
 import pandas as pd
 
-def obtener_rango_trabajo(df):
-    # Encontrar el primer índice donde 'nivel' es 0
-    primer_nivel_cero = df[df['nivel'] == 0].index[0]
+def obtener_rango_trabajo(df, nivel_inicial=0, inicio=0):
+    # Encontrar el primer índice donde 'nivel' es igual a nivel_inicial a partir del índice 'inicio'
+    primer_nivel = df[df['nivel'] == nivel_inicial].index[df[df['nivel'] == nivel_inicial].index >= inicio][0]
 
-    # Encontrar el siguiente índice donde 'nivel' es 0 después del primer nivel cero
-    siguiente_nivel_cero = df[df['nivel'] == 0].index[1] if len(df[df['nivel'] == 0]) > 1 else len(df)
+    # Encontrar el siguiente índice donde 'nivel' es igual a nivel_inicial después del primer nivel
+    siguiente_nivel = df[df['nivel'] == nivel_inicial].index[df[df['nivel'] == nivel_inicial].index > primer_nivel][0] if len(df[df['nivel'] == nivel_inicial].index[df[df['nivel'] == nivel_inicial].index > primer_nivel]) > 0 else len(df)
 
     # Filtrar el rango de trabajo
-    rango_trabajo = df.iloc[primer_nivel_cero:siguiente_nivel_cero]
+    rango_trabajo = df.iloc[primer_nivel:siguiente_nivel]
     return rango_trabajo
 
 def transformar_a_formato_sap(df):
-    # Obtener el rango de trabajo
+    # Obtener el rango de trabajo inicial
     rango_trabajo = obtener_rango_trabajo(df)
 
     # Crear el DataFrame df_sap con las columnas especificadas
@@ -54,8 +54,25 @@ def transformar_a_formato_sap(df):
             'cantidad_hijo': [row['cantidad']]
         })], ignore_index=True)
 
+    # Procesar cada hijo de nivel 1 como nuevo padre
+    for i in range(len(productos_hijos)):
+        hijo = productos_hijos.iloc[i]
+        nuevo_rango_trabajo = obtener_rango_trabajo(df, nivel_inicial=1, inicio=hijo.name)
+
+        # Filtrar los productos hijos del nuevo rango de trabajo
+        productos_nivel_2 = nuevo_rango_trabajo[nuevo_rango_trabajo['nivel'] == 2]
+
+        # Llenar el DataFrame df_sap con el nuevo rango de trabajo
+        for _, row in productos_nivel_2.iterrows():
+            df_sap = pd.concat([df_sap, pd.DataFrame({
+                'producto_padre': [hijo['producto']],
+                'producto_hijo': [row['producto']],
+                'cantidad_hijo': [row['cantidad']]
+            })], ignore_index=True)
+
     return df_sap
 
 
 df_sap = transformar_a_formato_sap(df)
 print(df_sap)
+df_sap.to_excel("export_df_sap.xlsx", index=False)
