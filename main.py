@@ -1,7 +1,7 @@
 import process_data
 from crear_db import save_to_sqlite
 from seleccionar_padre_uno import *
-from obtener_rango_de_trabajo import obtener_rango_trabajo
+
 
 # Ruta que contiene los archivos Excel
 directory_path = r'\\mercury\Mtto_Prod\00_Departamento_Mantenimiento\Proyectos\En proceso\sap_data\data'
@@ -15,11 +15,8 @@ db_path = r'\\mercury\Mtto_Prod\00_Departamento_Mantenimiento\Proyectos\En proce
 # save_to_sqlite(df)
 
 # Funcion para obtener el primer padre con sus hijos
-df = segment_first_product(db_path) #genera el df orifginal a trabajar. (formato bom)
+df = segment_first_product(db_path, cantidad=2)  #genera el df orifginal a trabajar. (formato bom)
+print(df)  # 1512 productos nivel = 0
 
-# Funcion que guarda en memoria el producto, su tipo, y la cantidad.
-# save_product_details(df)
-
-# Funcion que obtiene en "df" el rango de trabajo (un solo producto de nivel 1 y sus hijos en formato bom)
-df = obtener_rango_trabajo(df)
+#
 
