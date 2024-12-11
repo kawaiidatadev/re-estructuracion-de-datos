@@ -1,0 +1,132 @@
+# Primer filtro por rango recursivo
+"""
+Quiero, el codigo que se explica a continuacion, suponiendo que ya tengo mi 'df' y 'df_sap'
+********
+EL CODIGO DEBE DE PROCESAR PRIMERO EL RANGO DEL PRODCUTO NIVEL = 0, HASTA EL SIGUIENTE PRODUCTO NIVEL = 0.
+Y DE ALLI EN ADELANTE, SE DEBE REALIZAR EL PROCESO DE LOS NIVELES = 1. LUEGO, AHORA SI, SE DEBE DE PASAR AL
+SIGUIENTE RANGO DEL SIGUIENTE PRODUCTO DE NIVEL = 0. Y DE ALLI EN ADELANTE, SE DEBE REALIZAR EL PROCESO
+DE LOS NIVELES = 1. ********
+
+[Primer gran paso:]
+*(trabajando sobre 'df')
+Detectar, el primer 'producto', que tenga un 'nivel' = 0.
+Guardarlo en memoria.
+
+*(trabajando sobre 'df_sap')
+colocar este producto, en 'producto_padre'
+
+*(trabajando sobre 'df')
+Guardar en memoria, con los productos de 'nivel' = 1, antes de llegar al siguiente producto 'nivel' = 0, con su
+'cantidad' asignada, en base a su id de registro en el dataframe, ya que puede ser que se repitan los productos,
+pero su cantidad sea diferente.
+
+*(trabajando sobre 'df_sap')
+colocar estos productos en 'producto_hijo', y su df['cantidad'], en df_sap['cantidad_hijo']
+copiando, y pegando, el 'producto_padre' anterior, en todos los registros necesarios.
+
+***El siguiente codigo funciona perfecto, pero le faltan el paso 2, 3, 4..***
+# Detectar todos los productos con nivel = 0
+productos_padre_nivel_0 = df[df['nivel'] == 0]['producto'].tolist()
+
+# Iterar sobre cada producto padre de nivel 0
+for producto_padre in productos_padre_nivel_0:
+    # Filtrar productos de nivel = 1 hasta el siguiente producto de nivel = 0
+    hijos_nivel_1 = []
+    agregar = False
+    for index, row in df.iterrows():
+        if row['producto'] == producto_padre:
+            agregar = True
+            continue
+        if agregar:
+            if row['nivel'] == 0 and row['producto'] != producto_padre:
+                break
+            if row['nivel'] == 1:
+                hijos_nivel_1.append((producto_padre, row['producto'], row['cantidad']))
+
+    # Añadir los productos hijos de nivel 1 a df_sap
+    for padre, hijo, cantidad in hijos_nivel_1:
+        nuevo_df = pd.DataFrame({'producto_padre': [padre], 'producto_hijo': [hijo], 'cantidad_hijo': [cantidad]})
+        if not nuevo_df.empty and nuevo_df.notna().all().all():
+            df_sap = pd.concat([df_sap, nuevo_df], ignore_index=True) if not df_sap.empty else nuevo_df
+
+    # Procesar productos de nivel 1 y sus hijos de nivel 2 dentro del rango del producto padre actual
+    for padre, hijo, cantidad in hijos_nivel_1:
+        hijos_nivel_2 = []
+        agregar = False
+        for index, row in df.iterrows():
+            if row['producto'] == hijo:
+                agregar = True
+                continue
+            if agregar:
+                if row['nivel'] == 1 and row['producto'] != hijo:
+                    break
+                if row['nivel'] == 2:
+                    hijos_nivel_2.append((hijo, row['producto'], row['cantidad']))
+
+        # Añadir los productos hijos de nivel 2 a df_sap
+        for padre_n2, hijo_n2, cantidad_n2 in hijos_nivel_2:
+            nuevo_df_n2 = pd.DataFrame({'producto_padre': [padre_n2], 'producto_hijo': [hijo_n2], 'cantidad_hijo': [cantidad_n2]})
+            if not nuevo_df_n2.empty and nuevo_df_n2.notna().all().all():
+                df_sap = pd.concat([df_sap, nuevo_df_n2], ignore_index=True) if not df_sap.empty else nuevo_df_n2
+
+# Imprimir df_sap
+print(df_sap)
+df_sap.to_excel('sap_recursivo.xlsx', index=False)
+***Fin del ejemplo de referencia***
+
+[Segundo gran paso:]
+*(trabajando sobre 'df')
+ahora, detectar, el primer 'producto', que tenga un 'nivel' = 1.
+Guardarlo en memoria.
+
+*(trabajando sobre 'df_sap')
+colocar este producto, en 'producto_padre', hasta abajo.
+
+*(trabajando sobre 'df')
+Guardar en memoria, con los productos de 'nivel' = 2, antes de llegar al siguiente producto 'nivel' = 1, con su
+'cantidad' asignada, en base a su id de registro en el dataframe, ya que puede ser que se repitan los productos,
+pero su cantidad sea diferente.
+
+*(trabajando sobre 'df_sap')
+colocar estos productos en 'producto_hijo', y su df['cantidad'], en df_sap['cantidad_hijo']
+copiando, y pegando, el 'producto_padre' anterior, en todos los registros necesarios.
+
+[Tercer gran paso:]
+
+*(trabajando sobre 'df')
+ahora, detectar, el primer 'producto', que tenga un 'nivel' = 2.
+Guardarlo en memoria.
+
+*(trabajando sobre 'df_sap')
+colocar este producto, en 'producto_padre', hasta abajo.
+
+*(trabajando sobre 'df')
+Guardar en memoria, con los productos de 'nivel' = 3, antes de llegar al siguiente producto 'nivel' = 2, con su
+'cantidad' asignada, en base a su id de registro en el dataframe, ya que puede ser que se repitan los productos,
+pero su cantidad sea diferente.
+
+*(trabajando sobre 'df_sap')
+colocar estos productos en 'producto_hijo', y su df['cantidad'], en df_sap['cantidad_hijo']
+copiando, y pegando, el 'producto_padre' anterior, en todos los registros necesarios.
+
+
+[Cuarto gran paso:]
+
+*(trabajando sobre 'df')
+ahora, detectar, el primer 'producto', que tenga un 'nivel' = 3.
+Guardarlo en memoria.
+
+*(trabajando sobre 'df_sap')
+colocar este producto, en 'producto_padre', hasta abajo.
+
+*(trabajando sobre 'df')
+Guardar en memoria, con los productos de 'nivel' = 4, antes de llegar al siguiente producto 'nivel' = 3, con su
+'cantidad' asignada, en base a su id de registro en el dataframe, ya que puede ser que se repitan los productos,
+pero su cantidad sea diferente.
+
+*(trabajando sobre 'df_sap')
+colocar estos productos en 'producto_hijo', y su df['cantidad'], en df_sap['cantidad_hijo']
+copiando, y pegando, el 'producto_padre' anterior, en todos los registros necesarios.
+
+
+"""
