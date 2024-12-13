@@ -135,7 +135,7 @@ def obtener_hijos(df_rango, producto_padre, nivel_padre, nivel_hijo):
                 print(
                     f"Hijo detectado: Producto padre: {producto_padre}, Producto hijo: {row['producto']}, Cantidad: {row['cantidad']}.")
                 hijos.append((producto_padre, row['producto'], row['cantidad']))
-        time.sleep(20)
+        time.sleep(3)
 
     # Retornamos la lista de hijos detectados
     print(f"Hijos detectados para el producto {producto_padre} (nivel {nivel_hijo}): {hijos}")
@@ -164,7 +164,7 @@ def agregar_hijos_a_df(df_sap, hijos):
             df_sap = pd.concat([df_sap, nuevo_df], ignore_index=True) if not df_sap.empty else nuevo_df
         else:
             print("El nuevo DataFrame está vacío o contiene valores nulos. Se omite esta entrada.")
-        time.sleep(20)
+        time.sleep(3)
 
     print(f"\nDataFrame actualizado con las relaciones padre-hijo detectadas: \n{df_sap}")
     return df_sap
