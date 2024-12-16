@@ -26,12 +26,14 @@ nivel_maximo = df['nivel'].max()
 # Imprimir el nivel máximo encontrado
 print(f"El nivel máximo encontrado es: {nivel_maximo}")
 import time
-time.sleep(10)
-
+time.sleep(8)
 # Crear un dataframe 'df_sap' nuevo, con las columnas ['producto_padre', 'producto_hijo', 'cantidad_hijo'
 df_sap = pd.DataFrame(columns=['producto_padre', 'producto_hijo', 'cantidad_hijo'])
 
-import time
+"""
+Desde aqui, todo lo de abajo, debo de llamarlo como una funcion llamada "recostructor_jerarquico"
+desde otro archivo .py en pycharm, llamdo "recostructor.py"
+"""
 
 
 # Función para obtener productos de nivel 0
@@ -41,7 +43,7 @@ def obtener_productos_nivel_0(df):
     """
     print("Inicio de la función 'obtener_productos_nivel_0'.")
     print("Objetivo: Identificar todos los productos en el DataFrame que tienen el nivel 0.")
-    time.sleep(20)
+    time.sleep(15)
 
     # Filtramos el DataFrame para encontrar filas donde la columna 'nivel' sea igual a 0
     print("Filtrando el DataFrame para detectar las filas donde 'nivel' sea igual a 0.")
@@ -49,7 +51,7 @@ def obtener_productos_nivel_0(df):
 
     print("Conversión del resultado a una lista con los productos de nivel 0.")
     print(f"Productos detectados con nivel 0: {productos}")
-    time.sleep(20)
+    time.sleep(15)
 
     # Retornamos la lista de productos de nivel 0
     print("Devolviendo la lista de productos de nivel 0 para su uso posterior.")
@@ -65,13 +67,13 @@ def obtener_rango_producto(df, producto_actual, siguiente_producto=None):
     print(
         "Objetivo: Extraer un subconjunto de filas del DataFrame que representan el rango entre dos productos de nivel 0.")
     print(f"Producto actual: {producto_actual}. Producto siguiente: {siguiente_producto}.")
-    time.sleep(20)
+    time.sleep(15)
 
     # Encontramos el índice de inicio del producto actual
     print("Buscando el índice del producto actual en el DataFrame.")
     inicio = df[df['producto'] == producto_actual].index[0]
     print(f"Índice de inicio encontrado: {inicio}.")
-    time.sleep(20)
+    time.sleep(15)
 
     # Determinamos el índice de fin con base en el producto siguiente, si existe
     if siguiente_producto:
@@ -82,13 +84,13 @@ def obtener_rango_producto(df, producto_actual, siguiente_producto=None):
         print("No se proporcionó un producto siguiente. Usaremos el tamaño total del DataFrame como índice de fin.")
         fin = len(df)
         print(f"Índice de fin establecido en: {fin}.")
-    time.sleep(20)
+    time.sleep(15)
 
     # Extraemos el rango de filas entre los índices de inicio y fin
     print("Extrayendo el rango de filas del DataFrame entre los índices de inicio y fin.")
     rango = df.iloc[inicio:fin]
     print(f"Rango extraído:\n{rango}")
-    time.sleep(20)
+    time.sleep(15)
 
     # Retornamos el rango extraído
     print("Devolviendo el rango procesado para su uso posterior.")
@@ -103,7 +105,7 @@ def obtener_hijos(df_rango, producto_padre, nivel_padre, nivel_hijo):
     print("\nInicio de la función 'obtener_hijos'.")
     print("Objetivo: Identificar productos hijos que se encuentren en un rango de filas del DataFrame.")
     print(f"Producto padre: {producto_padre}, Nivel del padre: {nivel_padre}, Nivel de los hijos: {nivel_hijo}.")
-    time.sleep(20)
+    time.sleep(15)
 
     # Lista para almacenar los hijos detectados
     print("Inicializando una lista vacía para almacenar los productos hijos detectados.")
@@ -189,7 +191,7 @@ def procesar_niveles_recursivo(df, df_sap, rango, producto_padre, nivel_padre, n
     print("Llamando a la función 'obtener_hijos' para identificar los productos hijos.")
     hijos = obtener_hijos(rango, producto_padre, nivel_padre, nivel_hijo)
     print(f"Hijos detectados: {hijos}")
-    time.sleep(20)
+    time.sleep(15)
 
     # Añadir las relaciones padre-hijo detectadas al DataFrame de salida
     print("Llamando a la función 'agregar_hijos_a_df' para añadir los hijos detectados al DataFrame de salida.")
@@ -200,7 +202,7 @@ def procesar_niveles_recursivo(df, df_sap, rango, producto_padre, nivel_padre, n
     for _, hijo, _ in hijos:
         print(f"\nProcesando hijo '{hijo}' como nuevo producto padre en el siguiente nivel.")
         df_sap = procesar_niveles_recursivo(df, df_sap, rango, hijo, nivel_hijo, nivel_hijo + 1, max_nivel)
-        time.sleep(20)
+        time.sleep(15)
 
     print(f"\nFinalizando procesamiento recursivo para el producto padre '{producto_padre}' en el nivel {nivel_padre}.")
     return df_sap
