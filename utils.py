@@ -19,8 +19,11 @@ def process_excel_file(file_path):
     # Quitar filas vacías
     df.dropna(how='all', inplace=True)
 
-    # Eliminar columnas especificadas
-    df.drop(columns=['Unidad', 'Proveedor', 'Equipo', 'Ultimo Costo', 'Costo', 'Costo Extendido'], inplace=True)
+    # Eliminar columnas especificadas si existen
+    columns_to_remove = ['Unidad', 'Proveedor', 'Equipo', 'Ultimo Costo', 'Costo', 'Costo Extendido']
+    existing_columns_to_remove = set(df.columns).intersection(columns_to_remove)
+    if existing_columns_to_remove:
+        df.drop(columns=existing_columns_to_remove, inplace=True)
 
     # Renombrar columnas
     df.rename(columns={'Cantidad por': 'Cantidad'}, inplace=True)
