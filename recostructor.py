@@ -1,5 +1,5 @@
 import pandas as pd
-import #  time
+import time
 
 # Función para obtener productos de nivel 0
 def obtener_productos_nivel_0(df):
